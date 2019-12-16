@@ -5,7 +5,7 @@ from sklearn.metrics import accuracy_score
 class B1:
 
     def train(self,x_train, y_train,x_val,y_val):
-        try_C=[0.1,0.5,1,5,10,50,100]
+        try_C=[0.1,0.5]#,1,5,10,50,100]
         loop = len(try_C)
         val_acc_max = 0
         list_acc = list(range(0,loop))
