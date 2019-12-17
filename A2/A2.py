@@ -1,5 +1,3 @@
-#from sklearn.preprocessing import MinMaxScaler
-#from sklearn.model_selection import train_test_split
 from sklearn import svm
 from sklearn.svm import SVC
 import numpy as np
@@ -16,16 +14,12 @@ class A2:
     #c_gap = 0.1
     #loop = int((c_max - c_min)/c_gap)
     #try_para=np.arange(c_min,c_max,c_gap)
-        param_grid={'C':[0.1,0.5,1,5,10,50,100],'kernel':['linear','rbf']}
+        param_grid={'C':np.logspace(-5, 15, 21, endpoint=True, base=2),'gamma':np.logspace(-15,3,19,endpoint=True, base=2)}
         #loop = len(try_para)######################
         #list_acc = list(range(0,loop))
         #for i in range(0,loop):
-        clf = GridSearchCV(SVC( gamma = 'scale'),param_grid,cv = 3)
+        clf = GridSearchCV(SVC( kernel = 'rbf'),param_grid,cv = 3)
         clf = clf.fit(x_train, y_train)
-        #self.kernel = clf.best_params_['kernel']
-        #self.C = clf.best_params_['C']
-        #print(self.kernel)
-        #print(clf.cv_results_)
         self.clf = clf
         y_train_pred= clf.predict(x_train)
         train_acc = float(accuracy_score(y_train,y_train_pred))
@@ -52,4 +46,3 @@ class A2:
         y_test_pred = self.clf.predict(x_test)
         test_acc = float(accuracy_score(y_test,y_test_pred))
         return test_acc
-        

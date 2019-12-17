@@ -1,17 +1,17 @@
 from sklearn import svm
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
+from sklearn.model_selection import KFold
 from sklearn.model_selection import GridSearchCV
-
+import numpy as np
 class A1:
-    #def __init__(self,para=1):
-    #    self.para = para
-
     def train(self,x_train, y_train):
-        param_grid={'C':[0.1,0.5,1,5,10,50,100],'kernel':['linear','rbf']}
-        clf = GridSearchCV(SVC(gamma = 'scale'),param_grid,cv = 3)
+
+        param_grid={'C':np.logspace(-5, 15, 21, endpoint=True, base=2),'gamma':np.logspace(-15,3,19,endpoint=True, base=2)}#'kernel':['rbf']}
+        clf = GridSearchCV(SVC(kernel = 'rbf'),param_grid,cv = 3)
         clf = clf.fit(x_train, y_train)
         self.clf = clf
+        print(clf.best_score_)
         y_train_pred= clf.predict(x_train)
         train_acc = float(accuracy_score(y_train,y_train_pred))
         return train_acc
