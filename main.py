@@ -1,9 +1,9 @@
 #import lab2_landmarks as l2
 import numpy as np
 from sklearn.model_selection import train_test_split
-#import pandas as pd
+import pandas as pd
 import sys
-'''
+
 sys.path.append('./A1/')
 import data_A
 from A1 import A1
@@ -16,14 +16,42 @@ import data_B
 from B1 import B1
 sys.path.append('./B2/')
 from B2 import B2
-
+'''
 #X, Y_gender, Y_smiling = l2.extract_features_labels()
 #=================================================================
-'''
+
 X_train_A1, X_test_A1,  Y_train_A1, Y_test_A1  = data_A.A1()
 X_train_A2, X_test_A2,  Y_train_A2, Y_test_A2 = data_A.A2()
-'''
-'''
+
+np.save('img_A11',X_train_A1)
+np.save('img_A12',X_test_A1)
+np.save('img_A21',X_train_A2)
+np.save('img_A22',X_test_A2)
+np.save('img_A111',Y_train_A1)
+np.save('img_A122',Y_test_A1)
+np.save('img_A211',Y_train_A2)
+np.save('img_A222',Y_test_A2)
+
+
+
+
+X_train_A1=np.load('img_A11.npy')
+X_test_A1=np.load('img_A12.npy')
+X_train_A2=np.load('img_A21.npy')
+X_test_A2=np.load('img_A22.npy')
+Y_train_A1=np.load('img_A111.npy')
+Y_test_A1=np.load('img_A122.npy')
+Y_train_A2=np.load('img_A211.npy')
+Y_test_A2=np.load('img_A222.npy')
+
+
+
+
+
+
+
+
+''' ############################LAND MARK#####################################
 #np.save('img_A',X)
 X=np.load('img_A.npy')
 
@@ -52,25 +80,25 @@ X_test_A2 = scaler.transform(X_test_A2)
 #print(X_test_A2.shape)
 '''
 #==========================================================================================
-'''
+
 model_A1 = A1()
 acc_A1_train = model_A1.train(X_train_A1,Y_train_A1)
 acc_A1_test = model_A1.test(X_test_A1,Y_test_A1)
-print(acc_A1_train)
-print(acc_A1_test)
+print('acc_A1_train',acc_A1_train)
+print('acc_A1_test',acc_A1_test)
 print(' ')
 #=========================================================================================
 model_A2 = A2()
 acc_A2_train = model_A2.train(X_train_A2,Y_train_A2)
 acc_A2_test = model_A2.test(X_test_A2,Y_test_A2)
-print(acc_A2_train)
-print(acc_A2_test)
+print('acc_A2_train',acc_A2_train)
+print('acc_A2_test',acc_A2_test)
 print(' ')
+
+
+
+
 '''
-
-
-
-
 
 X_train_B1, X_test_B1, X_val_B1, Y_train_B1, Y_test_B1, Y_val_B1 = data_B.B1()
 X_train_B2, X_test_B2, X_val_B2, Y_train_B2, Y_test_B2, Y_val_B2 = data_B.B2()
@@ -119,3 +147,4 @@ print(acc_B2_train)
 acc_B2_test = model_B2.test(X_test_B2, Y_test_B2)
 
 print(acc_B2_test)
+'''
