@@ -10,13 +10,11 @@ from A1 import A1
 sys.path.append('./A2/')
 from A2 import A2
 from sklearn.preprocessing import StandardScaler
-'''
 sys.path.append('./B1/')
 import data_B
 from B1 import B1
 sys.path.append('./B2/')
 from B2 import B2
-'''
 #X, Y_gender, Y_smiling = l2.extract_features_labels()
 #=================================================================
 
@@ -50,8 +48,8 @@ Y_test_A2=np.load('img_A222.npy')
 
 
 
-
-''' ############################LAND MARK#####################################
+'''
+ ############################LAND MARK#####################################
 #np.save('img_A',X)
 X=np.load('img_A.npy')
 
@@ -98,7 +96,6 @@ print(' ')
 
 
 
-'''
 
 X_train_B1, X_test_B1, X_val_B1, Y_train_B1, Y_test_B1, Y_val_B1 = data_B.B1()
 X_train_B2, X_test_B2, X_val_B2, Y_train_B2, Y_test_B2, Y_val_B2 = data_B.B2()
@@ -147,4 +144,3 @@ print(acc_B2_train)
 acc_B2_test = model_B2.test(X_test_B2, Y_test_B2)
 
 print(acc_B2_test)
-'''

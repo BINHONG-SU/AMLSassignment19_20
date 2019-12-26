@@ -7,11 +7,12 @@ from sklearn.model_selection import train_test_split
 import numpy as np
 class A1:
     def train(self,x_train, y_train):
-        param_grid={'C':[0.1,0.5,1,5,10,50,100],'gamma':np.logspace(-9,1,11,endpoint=True, base=10)}#np.logspace(-5, 5, 11, endpoint=True, base=10)}#,'gamma':np.logspace(-15,3,19,endpoint=True, base=2)}
-        clf = GridSearchCV(SVC(kernel = 'rbf'),param_grid,cv = 2)
+        param_grid={'C':[0.1,0.5,1,5,10,50,100],'gamma':np.logspace(-10,0,11,endpoint=True, base=2)}#np.logspace(-5, 5, 11, endpoint=True, base=10)}#,'gamma':np.logspace(-15,3,19,endpoint=True, base=2)}
+        clf = GridSearchCV(SVC(kernel = 'rbf'),param_grid,cv = 4)
         clf = clf.fit(x_train, y_train)
         self.clf = clf
         print(clf.best_score_)
+        print(clf.best_estimator_)
         y_train_pred= clf.predict(x_train)
         train_acc = float(accuracy_score(y_train,y_train_pred))
         return train_acc

@@ -15,10 +15,10 @@ for i in range(0,sum):
     #img_i_400 = img_i[50:450,50:450]
     #img_i_200 = cv2.resize(img_i_400,(100,100))
     img_gray = cv2.cvtColor(img,cv2.COLOR_RGB2GRAY)
-    img_gray_resize1 = img_gray[20:158,20:198]
-    img_gray_resize2 = img_gray[20:158,20:100]
-    img_A1[i] = hog(img_gray_resize1,orientations=8, pixels_per_cell=(9, 9),cells_per_block=(3, 3), feature_vector=True,visualize=False)
-    img_A2[i] = hog(img_gray_resize2,orientations=8, pixels_per_cell=(9, 9),cells_per_block=(3, 3), feature_vector=True,visualize=False)
+    img_A1[i] = img_gray[20:158,20:198].flatten()
+    img_A2[i] = img_gray[20:158,20:100].flatten()
+    #img_A1[i] = hog(img_gray_resize1,orientations=8, pixels_per_cell=(9, 9),cells_per_block=(3, 3), feature_vector=True,visualize=False)
+    #img_A2[i] = hog(img_gray_resize2,orientations=8, pixels_per_cell=(9, 9),cells_per_block=(3, 3), feature_vector=True,visualize=False)
     print(img_A1[i].shape)
     print(img_A2[i].shape)
     #dim = img_gray.shape
@@ -40,7 +40,7 @@ def A1():
     X_train_A1 = scaler.fit_transform(X_train_A1)
     X_test_A1 = scaler.transform(X_test_A1)
 
-    n_componets = 300
+    n_componets = 120
     pca = PCA(n_components=n_componets)
     pca.fit(X_train_A1)
     print(pca.explained_variance_ratio_.sum())
@@ -59,7 +59,7 @@ def A2():
     X_train_A2 = scaler.fit_transform(X_train_A2)
     X_test_A2 = scaler.transform(X_test_A2)
 
-    n_componets = 200
+    n_componets = 100
     pca = PCA(n_components=n_componets)
     pca.fit(X_train_A2)
     print(pca.explained_variance_ratio_.sum())
