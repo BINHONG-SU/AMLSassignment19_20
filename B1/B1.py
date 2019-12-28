@@ -2,7 +2,8 @@ from sklearn import svm
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 import numpy as np
-
+from sklearn.model_selection import learning_curve
+import matplotlib.pyplot as plt
 class B1:
 
     def train(self,x_train, y_train,x_val,y_val):
@@ -34,3 +35,18 @@ class B1:
         y_test_pred = self.model.predict(x_test)
         test_acc = float(accuracy_score(y_test,y_test_pred))
         return test_acc
+
+    def plot_learning_curve(self,x_train,y_train):
+        train_sizes, train_scores, test_scores=learning_curve(self.model, x_train, y_train, train_sizes=np.linspace(0.1, 1.0, 10), cv=5, n_jobs=-1)
+        train_scores_mean = np.mean(train_scores, axis=1)
+        test_scores_mean = np.mean(test_scores, axis=1)
+        plt.plot(train_sizes, train_scores_mean, 'o-', color='r',label='SVC_train')
+        plt.plot(train_sizes, test_scores_mean, 'o-', color='b',label='SVC_test')
+        plt.legend(('Train accuracy', 'Test accuracy'), loc='lower right')
+        plt.title('Learning curve of B1_best_estimator_')
+        plt.xlabel('Training examples')
+        plt.ylabel('Accuracy')
+        plt.ylim(0,1)
+        plt.grid()
+        plt.show()
+        return None

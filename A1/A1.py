@@ -2,13 +2,15 @@ from sklearn import svm
 from sklearn.svm import SVC
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import GridSearchCV
-from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import learning_curve
 from sklearn.model_selection import train_test_split
+import matplotlib.pyplot as plt
 import numpy as np
 class A1:
     def train(self,x_train, y_train):
-        param_grid={'C':[0.1,0.5,1,5,10,50,100],'gamma':np.logspace(-10,0,11,endpoint=True, base=2)}#np.logspace(-5, 5, 11, endpoint=True, base=10)}#,'gamma':np.logspace(-15,3,19,endpoint=True, base=2)}
-        clf = GridSearchCV(SVC(kernel = 'rbf'),param_grid,cv = 4)
+        param_grid={'C':[0.1,0.5,1,5,10,50,100],'gamma':np.logspace(-10,0,11,endpoint=True, base=2)}
+        clf = GridSearchCV(SVC(kernel = 'rbf',gamma = 'scale'),param_grid,iid='False',cv = 4)
+        #clf = SVC(kernel = 'rbf',gamma = 'scale')
         clf = clf.fit(x_train, y_train)
         self.clf = clf
         print(clf.best_score_)
@@ -29,3 +31,20 @@ class A1:
         y_test_pred = self.clf.predict(x_test)
         test_acc = float(accuracy_score(y_test,y_test_pred))
         return test_acc
+
+
+    def plot_learning_curve(self,x_train,y_train):
+        train_sizes, train_scores, test_scores=learning_curve(self.clf, x_train, y_train, train_sizes=np.linspace(0.1, 1.0, 10), cv=5, n_jobs=2)
+        print('1')
+        train_scores_mean = np.mean(train_scores, axis=1)
+        test_scores_mean = np.mean(test_scores, axis=1)
+        plt.plot(train_sizes, train_scores_mean, 'o-', color='r',label='SVC_train')
+        plt.plot(train_sizes, test_scores_mean, 'o-', color='b',label='SVC_test')
+        plt.legend(('Train accuracy', 'Test accuracy'), loc='lower right')
+        plt.title('Learning curve of A1_best_estimator_')
+        plt.xlabel('Training examples')
+        plt.ylabel('Accuracy')
+        plt.ylim(0,1)
+        plt.grid()
+        plt.show()
+        return None
