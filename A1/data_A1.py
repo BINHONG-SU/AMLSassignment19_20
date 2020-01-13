@@ -1,47 +1,53 @@
 import numpy as np
-from sklearn.model_selection import train_test_split
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
 import pandas as pd
 import cv2
-from skimage.feature import hog
 
+class data_A1:
+    def train(self):    #get the training dataset
+        sum = 5000
 
-def get_data():
-    sum = 5000
+        img = list(range(0,sum))
+        for i in range(0,sum):
+            img_ = cv2.imread('././datasets/celeba/img/%d.jpg' % i)     #Read the .jpg pictures
+            img_gray = cv2.cvtColor(img_,cv2.COLOR_RGB2GRAY)    #Convert to the gray value
+            img_gray_re = img_gray[20:158,20:198]   #Crop image
+            img[i] = img_gray_re.flatten()
+        X_raw = np.array(img)
 
-    img = list(range(0,sum))
-    for i in range(0,sum):
-        img_ = cv2.imread('././datasets/celeba/img/%d.jpg' % i)
-        img_gray = cv2.cvtColor(img_,cv2.COLOR_RGB2GRAY)
-        img[i] = img_gray[20:158,20:198].flatten()
+        labels = pd.read_csv('././datasets/celeba/labels.csv')  #Read the labels
+        Y_raw = labels['gender']
+        Y = np.array(Y_raw.values).flatten()[0:sum]
 
-    #img_A1[i] = hog(img_gray_resize1,orientations=8, pixels_per_cell=(9, 9),cells_per_block=(3, 3), feature_vector=True,visualize=False)
-    #dim = img_gray.shape
-    #img_resize = cv2.resize(img_gray,(int(dim[0]/4), int(dim[1]/4)))
-    #img_A[i] = img_resize.flatten()
-    X = np.array(img)
+        scaler = StandardScaler()   #Standadize the data
+        scaler = scaler.fit(X_raw)
+        X_sta = scaler.transform(X_raw)
+        self.scaler = scaler
 
+        n_componets = 120   #Use PCA to reduce the demensianlity of input data
+        pca = PCA(n_components=n_componets,random_state=99)
+        pca.fit(X_sta)
+        print('A1_pca variance',pca.explained_variance_ratio_.sum())    #Check the information kept after dimensionality reduction
+        X = pca.transform(X_sta)
+        self.pca = pca
+        return X, Y
 
-    labels = pd.read_csv('././datasets/celeba/labels.csv')
-    Y_ = labels['gender']
-    Y = np.array(Y_.values).flatten()[0:sum]
+    def test(self): #get the testing dataset
+        sum = 1000
 
+        img = list(range(0,sum))
+        for i in range(0,sum):
+            img_ = cv2.imread('././datasets/celeba_test/img/%d.jpg' % i)    #Read the .jpg pictures
+            img_gray = cv2.cvtColor(img_,cv2.COLOR_RGB2GRAY)    #Convert to the gray value
+            img_gray_re = img_gray[20:158,20:198]   #Crop image
+            img[i] = img_gray_re.flatten()
+        X_raw = np.array(img)
 
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, train_size= 0.8, random_state=0)
-    scaler = StandardScaler()
-    X_train = scaler.fit_transform(X_train)
-    X_test = scaler.transform(X_test)
+        labels = pd.read_csv('././datasets/celeba_test/labels.csv')      #Read the labels
+        Y_raw = labels['gender']
+        Y = np.array(Y_raw.values).flatten()[0:sum]
 
-    n_componets = 120
-    pca = PCA(n_components=n_componets)
-    pca.fit(X_train)
-    print('A1_pca variance',pca.explained_variance_ratio_.sum())
-    X_train = pca.transform(X_train)
-    X_test = pca.transform(X_test)
-
-    scaler = StandardScaler()
-    X_train = scaler.fit_transform(X_train)
-    X_test = scaler.transform(X_test)
-
-    return X_train, X_test, Y_train, Y_test
+        X_sta = self.scaler.transform(X_raw)    #Standadize the data
+        X = self.pca.transform(X_sta)   #Use PCA to reduce the demensianlity of input testing data
+        return X, Y

@@ -5,45 +5,58 @@ from sklearn.preprocessing import StandardScaler
 import pandas as pd
 import cv2
 
-def get_data():
-    sum = 10000
+class data_B1:
+    def train(self):     #get the training dataset
+        sum = 10000
 
-    img = list(range(0,sum))
+        img = list(range(0,sum))
+        for i in range(0,sum):
+            img_ = cv2.imread('././datasets/cartoon_set/img/%d.png' % i)    #Read the .png pictures
+            img_1 = img_[50:450,50:450] #Crop image
+            img_2 = cv2.resize(img_1,(100,100)) #resize the image
+            img_3 = cv2.cvtColor(img_2,cv2.COLOR_RGB2GRAY)  #Convert to the gray value
+            img[i] = img_3.flatten()
+        X_raw = np.array(img)
 
-    for i in range(0,sum):
-        img_ = cv2.imread('././datasets/cartoon_set/img/%d.png' % i)
+        labels = pd.read_csv('././datasets/cartoon_set/labels.csv') #Read the labels
+        Y_raw = labels['face_shape']
+        Y = np.array(Y_raw.values).flatten()
 
-        img_1 = img_[50:450,50:450]
-        img_2 = cv2.resize(img_1,(100,100))
-        img_3 = cv2.cvtColor(img_2,cv2.COLOR_RGB2GRAY)
-        img[i] = img_3.flatten()
+        X_train, X_val, Y_train, Y_val = train_test_split(X_raw, Y_raw, train_size= 0.8, random_state=0)#split the training set and validation set
 
+        scaler = StandardScaler()   #Standadize the data
+        sclaer = scaler.fit(X_train)
+        X_train_sta = scaler.transform(X_train)
+        X_val = scaler.transform(X_val)
+        self.scaler = scaler
 
+        n_componets = 200   #Use PCA to reduce the demensianlity of input data
+        pca = PCA(n_components=n_componets,random_state=1)
+        pca.fit(X_train_sta)
+        print('B1_pca variance',pca.explained_variance_ratio_.sum())    #Check the information kept after dimensionality reduction
+        X_train = pca.transform(X_train_sta)
+        X_val = pca.transform(X_val)
+        self.pca = pca
 
-    X = np.array(img)
+        return X_train, X_val, Y_train, Y_val
 
+    def test(self):
+        sum = 2500
 
-    labels = pd.read_csv('././datasets/cartoon_set/labels.csv')
-    Y_ = labels['face_shape']
-    Y = np.array(Y_.values).flatten()#[0:sum]
+        img = list(range(0,sum))
+        for i in range(0,sum):
+            img_ = cv2.imread('././datasets/cartoon_set_test/img/%d.png' % i)   #Read the .png pictures
+            img_1 = img_[50:450,50:450] #Crop image
+            img_2 = cv2.resize(img_1,(100,100)) #resize the image
+            img_3 = cv2.cvtColor(img_2,cv2.COLOR_RGB2GRAY)  #Convert to the gray value
+            img[i] = img_3.flatten()
+            X_raw = np.array(img)
 
+            labels = pd.read_csv('././datasets/cartoon_set_test/labels.csv')    #Read the labels
+        Y_raw = labels['face_shape']
+        Y_test = np.array(Y_raw.values).flatten()
 
-    X_train, X_temp, Y_train, Y_temp = train_test_split(X, Y, train_size= 0.6, random_state=0)
-    X_test, X_val, Y_test, Y_val = train_test_split(X_temp, Y_temp, train_size= 0.5, random_state=0)
-    scaler = StandardScaler()
-    X_train = scaler.fit_transform(X_train)
-    X_test = scaler.transform(X_test)
-    X_val = scaler.transform(X_val)
+        X_test_sta = self.scaler.transform(X_raw)    #Standadize the data
+        X_test = self.pca.transform(X_test_sta) #Use PCA to reduce the demensianlity of input data
 
-    n_componets = 200
-    pca = PCA(n_components=n_componets)
-    pca.fit(X_train)
-    print('B1_pca variance',pca.explained_variance_ratio_.sum())
-    X_train = pca.transform(X_train)
-    X_test = pca.transform(X_test)
-    X_val = pca.transform(X_val)
-
-    X_train = scaler.fit_transform(X_train)
-    X_test= scaler.transform(X_test)
-    X_val = scaler.transform(X_val)
-    return X_train, X_test, X_val, Y_train, Y_test, Y_val
+        return X_test, Y_test
